@@ -65,8 +65,8 @@
       <div class="collapse navbar-collapse"></div>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-link" aria-current="page" href="index.php">Home</a>
-          <a class="nav-link active" href="money_transfer.php">Money Transfer</a>
+          <a class="nav-link" href="index.php">Home</a>
+          <a class="nav-link active"  aria-current="page"  href="money_transfer.php">Money Transfer</a>
           <a class="nav-link" href="transactions.php">Transaction Record</a>
           <a class="nav-link" href="https://www.thesparksfoundationsingapore.org/">About Us</a>
         </div>
@@ -125,38 +125,69 @@
     $toname = $_POST["toname"];
     date_default_timezone_set("Asia/Kolkata");
     $timest = date("d:m:Y h:i:sa");
-    $sql4 = "INSERT INTO transactions (t_sender, t_receiver, t_amount, t_time) VALUES ('$fromname', '$toname', '$amount', '$timest')";
-    $result4 = $conn->query($sql4);
-    if($result4) {
-      $sql5 = "UPDATE customers SET cust_balance = cust_balance - '".$amount."' WHERE cust_name = '".$fromname."'";
-      $result5 = $conn->query($sql5);
-      $sql6 = "UPDATE customers SET cust_balance = cust_balance + '".$amount."' WHERE cust_name = '".$toname."'";
-      $result6 = $conn->query($sql6);
-    ?>
+    if($amount<=$cust_balance) {
+      $sql4 = "INSERT INTO transactions (t_sender, t_receiver, t_amount, t_time) VALUES ('$fromname', '$toname', '$amount', '$timest')";
+      $result4 = $conn->query($sql4);
+      if($result4) {
+        $sql5 = "UPDATE customers SET cust_balance = cust_balance - '".$amount."' WHERE cust_name = '".$fromname."'";
+        $result5 = $conn->query($sql5);
+        $sql6 = "UPDATE customers SET cust_balance = cust_balance + '".$amount."' WHERE cust_name = '".$toname."'";
+        $result6 = $conn->query($sql6);
+        ?>
 
-    <script type="text/javascript">
-      $(window).on('load', function() {
-        $('#exampleModal').modal('show');
-      });
-    </script>
+        <script type="text/javascript">
+        $(window).on('load', function() {
+          $('#exampleModal').modal('show');
+        });
+        </script>
 
-    <!-- successful modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- successful modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <i class="fas fa-check-circle fa-5x"></i> <br /><br />
+                <h1>SUCCESSFUL!</h1>
+                <p class="modelbodycontent">
+                  Successfully transferred Rs.<?php echo $amount ?> from <?php echo $fromname ?> to <?php echo $toname ?>.
+                </p>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
-            <i class="fas fa-check-circle fa-5x"></i> <br /><br />
-            <h1>SUCCESSFUL!</h1>
-            <p class="modelbodycontent">
-              Successfully transferred Rs.<?php echo $amount ?> from <?php echo $fromname ?> to <?php echo $toname ?>.
-            </p>
+        </div>
+
+      <?php } }
+      else {
+      ?>
+
+      <script type="text/javascript">
+      $(window).on('load', function() {
+        $('#exampleModal1').modal('show');
+      });
+      </script>
+
+      <!-- failure modal -->
+      <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <i class="far fa-times-circle fa-5x"></i> <br /><br />
+              <h1>LOW BALANCE!</h1>
+              <p class="modelbodycontent">
+                Transfer failed due to low balance in <?php echo $fromname ?>'s account.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  <?php } }?>
+
+    <?php } } ?>
+
 
  </body>
